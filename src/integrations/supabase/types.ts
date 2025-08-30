@@ -14,7 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      typing_tests: {
+        Row: {
+          accuracy: number
+          correct_characters: number
+          created_at: string
+          difficulty: string
+          duration: number
+          extra_characters: number
+          id: string
+          incorrect_characters: number
+          language: string
+          missed_characters: number
+          mode: string
+          raw_wpm: number
+          test_text: string
+          total_characters: number
+          typed_text: string
+          user_id: string | null
+          wpm: number
+        }
+        Insert: {
+          accuracy: number
+          correct_characters: number
+          created_at?: string
+          difficulty?: string
+          duration: number
+          extra_characters: number
+          id?: string
+          incorrect_characters: number
+          language?: string
+          missed_characters: number
+          mode?: string
+          raw_wpm: number
+          test_text: string
+          total_characters: number
+          typed_text: string
+          user_id?: string | null
+          wpm: number
+        }
+        Update: {
+          accuracy?: number
+          correct_characters?: number
+          created_at?: string
+          difficulty?: string
+          duration?: number
+          extra_characters?: number
+          id?: string
+          incorrect_characters?: number
+          language?: string
+          missed_characters?: number
+          mode?: string
+          raw_wpm?: number
+          test_text?: string
+          total_characters?: number
+          typed_text?: string
+          user_id?: string | null
+          wpm?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
