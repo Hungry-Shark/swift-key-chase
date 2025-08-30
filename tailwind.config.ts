@@ -52,6 +52,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				correct: {
+					DEFAULT: 'hsl(var(--correct))',
+					foreground: 'hsl(var(--correct-foreground))'
+				},
+				incorrect: {
+					DEFAULT: 'hsl(var(--incorrect))',
+					foreground: 'hsl(var(--incorrect-foreground))'
+				},
+				typing: {
+					default: 'hsl(var(--text-default))',
+					current: 'hsl(var(--text-current))',
+					correct: 'hsl(var(--text-correct))',
+					incorrect: 'hsl(var(--text-incorrect))',
+					extra: 'hsl(var(--text-extra))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -84,11 +99,26 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'typing-cursor': {
+					'0%, 50%': { opacity: '1' },
+					'51%, 100%': { opacity: '0' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'scale-in': {
+					'0%': { transform: 'scale(0.95)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'typing-cursor': 'typing-cursor 1s infinite',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'scale-in': 'scale-in 0.2s ease-out'
 			}
 		}
 	},

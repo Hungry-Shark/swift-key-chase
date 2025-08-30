@@ -2,41 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Monkeytype-inspired design system with dark theme and vibrant accents */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 220 13% 9%;
+    --foreground: 220 9% 46%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 15% 11%;
+    --card-foreground: 220 9% 46%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 15% 11%;
+    --popover-foreground: 220 9% 46%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 47 100% 58%;
+    --primary-foreground: 220 13% 9%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 220 9% 70%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 9% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 47 100% 58%;
+    --accent-foreground: 220 13% 9%;
+
+    --correct: 120 100% 50%;
+    --correct-foreground: 220 13% 9%;
+
+    --incorrect: 0 100% 60%;
+    --incorrect-foreground: 220 13% 9%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 220 9% 70%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+    --ring: 47 100% 58%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Typing-specific colors */
+    --text-default: 220 9% 30%;
+    --text-current: 220 9% 70%;
+    --text-correct: 120 100% 50%;
+    --text-incorrect: 0 100% 60%;
+    --text-extra: 0 100% 40%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(47 100% 58%) 0%, hsl(45 100% 65%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(47 100% 58%) 0%, hsl(50 100% 60%) 50%, hsl(45 100% 55%) 100%);
+    
+    /* Shadows */
+    --shadow-typing: 0 0 0 2px hsl(47 100% 58% / 0.1);
+    --shadow-correct: 0 0 0 2px hsl(120 100% 50% / 0.2);
+    --shadow-incorrect: 0 0 0 2px hsl(0 100% 60% / 0.2);
+
+    /* Animation durations */
+    --transition-fast: 0.15s;
+    --transition-smooth: 0.3s;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +124,60 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+  }
+}
+
+@layer utilities {
+  .text-typing-default {
+    @apply text-[hsl(var(--text-default))];
+  }
+  
+  .text-typing-current {
+    @apply text-[hsl(var(--text-current))];
+  }
+  
+  .text-typing-correct {
+    @apply text-[hsl(var(--text-correct))];
+  }
+  
+  .text-typing-incorrect {
+    @apply text-[hsl(var(--text-incorrect))];
+  }
+  
+  .text-typing-extra {
+    @apply text-[hsl(var(--text-extra))];
+  }
+  
+  .bg-typing-correct {
+    @apply bg-[hsl(var(--correct)/0.1)];
+  }
+  
+  .bg-typing-incorrect {
+    @apply bg-[hsl(var(--incorrect)/0.2)];
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .shadow-typing {
+    box-shadow: var(--shadow-typing);
+  }
+  
+  .shadow-correct {
+    box-shadow: var(--shadow-correct);
+  }
+  
+  .shadow-incorrect {
+    box-shadow: var(--shadow-incorrect);
+  }
+  
+  .transition-typing {
+    transition: all var(--transition-fast) ease-out;
   }
 }
