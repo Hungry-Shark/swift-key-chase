@@ -45,87 +45,42 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {user ? (
-          <div className="space-y-6">
-            {/* Navigation Tabs */}
-            <div className="flex gap-2 justify-center">
-              <Button
-                variant={activeTab === "test" ? "default" : "outline"}
-                onClick={() => setActiveTab("test")}
-                className="gap-2"
-              >
-                <Timer className="h-4 w-4" />
-                Typing Test
-              </Button>
-              <Button
-                variant={activeTab === "leaderboard" ? "default" : "outline"}
-                onClick={() => setActiveTab("leaderboard")}
-                className="gap-2"
-              >
-                <Trophy className="h-4 w-4" />
-                Leaderboard
-              </Button>
-            </div>
-
-            {/* Content */}
-            {activeTab === "test" && <TypingTest />}
-            {activeTab === "leaderboard" && <Leaderboard />}
+        <div className="space-y-6">
+          {/* Navigation Tabs */}
+          <div className="flex gap-2 justify-center">
+            <Button
+              variant={activeTab === "test" ? "default" : "outline"}
+              onClick={() => setActiveTab("test")}
+              className="gap-2"
+            >
+              <Timer className="h-4 w-4" />
+              Typing Test
+            </Button>
+            <Button
+              variant={activeTab === "leaderboard" ? "default" : "outline"}
+              onClick={() => setActiveTab("leaderboard")}
+              className="gap-2"
+            >
+              <Trophy className="h-4 w-4" />
+              Leaderboard
+            </Button>
           </div>
-        ) : (
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            {/* Hero Section */}
-            <div className="space-y-4">
-              <h1 className="text-6xl font-bold gradient-teal-gold">
-                TypeSpeed
-              </h1>
-              <p className="text-xl text-secondary max-w-2xl mx-auto">
-                Test and improve your typing speed with various practice modes. 
-                Compete with others and track your progress over time.
-              </p>
-            </div>
 
-            {/* Features */}
-            <div className="grid md:grid-cols-3 gap-6 mt-12">
-              <Card>
-                <CardContent className="p-6 text-center space-y-3">
-                  <Timer className="h-12 w-12 text-primary mx-auto" />
-                  <h3 className="text-lg font-semibold">Timed Tests</h3>
-                  <p className="text-secondary">
-                    15, 30, 60, or 120 second typing tests to measure your WPM and accuracy
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6 text-center space-y-3">
-                  <Target className="h-12 w-12 text-primary mx-auto" />
-                  <h3 className="text-lg font-semibold">Accuracy Tracking</h3>
-                  <p className="text-secondary">
-                    Monitor your typing accuracy and see detailed statistics for improvement
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6 text-center space-y-3">
-                  <Trophy className="h-12 w-12 text-primary mx-auto" />
-                  <h3 className="text-lg font-semibold">Global Leaderboard</h3>
-                  <p className="text-secondary">
-                    Compete with other typists and see how you rank globally
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* CTA */}
-            <div className="pt-8">
-              <AuthButton className="text-lg px-8 py-3" />
-              <p className="text-sm text-secondary mt-2">
-                Sign in to start testing your typing speed
-              </p>
-            </div>
-          </div>
-        )}
+          {/* Content */}
+          {activeTab === "test" && <TypingTest user={user} />}
+          {activeTab === "leaderboard" && (
+            user ? (
+              <Leaderboard />
+            ) : (
+              <div className="max-w-2xl mx-auto text-center space-y-6 py-12">
+                <Trophy className="h-12 w-12 text-primary mx-auto" />
+                <h2 className="text-2xl font-bold">Sign in to view the global leaderboard</h2>
+                <p className="text-secondary">Login to see your ranking and compete with others.</p>
+                <AuthButton className="text-lg px-8 py-3 mx-auto" />
+              </div>
+            )
+          )}
+        </div>
       </main>
     </div>
   );

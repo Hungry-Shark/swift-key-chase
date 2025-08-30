@@ -30,7 +30,7 @@ const WORDS = [
 
 const TEST_DURATIONS = [15, 30, 60, 120];
 
-export const TypingTest = ({ onComplete }: TypingTestProps) => {
+export const TypingTest = ({ onComplete, user }: TypingTestProps & { user?: any }) => {
   const [testText, setTestText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -145,53 +145,62 @@ export const TypingTest = ({ onComplete }: TypingTestProps) => {
       typedText,
     };
     
-    // Save to database
-    try {
-      const { data: user } = await supabase.auth.getUser();
-      
-      const { error } = await supabase.from("typing_tests").insert({
-        user_id: user.user?.id || null,
-        wpm: result.wpm,
-        accuracy: result.accuracy,
-        raw_wpm: result.rawWpm,
-        correct_characters: result.correctCharacters,
-        incorrect_characters: result.incorrectCharacters,
-        extra_characters: result.extraCharacters,
-        missed_characters: result.missedCharacters,
-        total_characters: result.totalCharacters,
-        duration: result.duration,
-        mode: "time",
-        difficulty: "normal",
-        language: "english",
-        test_text: result.testText,
-        typed_text: result.typedText,
-      });
-      
-      if (error) {
+    // Save to database only if user is logged in
+    if (user) {
+      try {
+        const { error } = await supabase.from("typing_tests").insert({
+          user_id: user.id,
+          wpm: result.wpm,
+          accuracy: result.accuracy,
+          raw_wpm: result.rawWpm,
+          correct_characters: result.correctCharacters,
+          incorrect_characters: result.incorrectCharacters,
+          extra_characters: result.extraCharacters,
+          missed_characters: result.missedCharacters,
+          total_characters: result.totalCharacters,
+          duration: result.duration,
+          mode: "time",
+          difficulty: "normal",
+          language: "english",
+          test_text: result.testText,
+          typed_text: result.typedText,
+        });
+        if (error) {
+          console.error("Error saving test result:", error);
+          toast.error("Failed to save test result");
+        } else {
+          toast.success("Test result saved!");
+        }
+      } catch (error) {
         console.error("Error saving test result:", error);
-        toast.error("Failed to save test result");
-      } else {
-        toast.success("Test result saved!");
       }
-    } catch (error) {
-      console.error("Error saving test result:", error);
+    } else {
+      toast("Sign in to save your score and appear on the leaderboard.");
     }
-    
     onComplete?.(result);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    
+    let value = e.target.value;
+    // Only allow space if current word is fully typed
+    if (value.length > 0 && value[value.length - 1] === ' ') {
+      const wordsArr = testText.split(' ');
+      const typedArr = value.trim().split(' ');
+      const currentWordIdx = typedArr.length - 1;
+      const currentWord = wordsArr[currentWordIdx] || '';
+      const typedWord = typedArr[currentWordIdx] || '';
+      if (typedWord !== currentWord) {
+        // Remove the space if word not complete
+        value = value.slice(0, -1);
+      }
+    }
     if (!isActive && value.length > 0) {
       setIsActive(true);
       setStartTime(Date.now());
     }
-    
     if (value.length <= testText.length) {
       setTypedText(value);
       setCurrentIndex(value.length);
-      
       // Check if test is complete
       if (value.length === testText.length) {
         handleTestComplete();
@@ -200,34 +209,53 @@ export const TypingTest = ({ onComplete }: TypingTestProps) => {
   };
 
   const renderText = () => {
-    return testText.split("").map((char, index) => {
-      let className = "transition-typing";
-      
-      if (index < typedText.length) {
-        if (typedText[index] === char) {
-          className += " text-typing-correct bg-typing-correct";
-        } else {
-          className += " text-typing-incorrect bg-typing-incorrect";
-        }
-      } else if (index === currentIndex) {
-        className += " text-typing-current relative";
-      } else {
-        className += " text-typing-default";
-      }
-      
+    // Split into words for better spacing
+    const words = testText.split(" ");
+    let charIndex = 0;
+    let typedWordIdx = 0;
+    let typedWords = typedText.split(" ");
+    return words.map((word, wIdx) => {
+      // Determine if word is completed
+      const isCompletedWord = wIdx < typedWords.length && typedWords[wIdx] === word;
       return (
-        <span key={index} className={className}>
-          {char}
-          {index === currentIndex && (
-            <span className="absolute left-0 top-0 h-full w-0.5 bg-primary animate-typing-cursor" />
-          )}
+        <span key={wIdx} className="inline-block mr-2">
+          {word.split("").map((char, cIdx) => {
+            let className = "transition-typing px-[2.5px] tracking-wide text-2xl md:text-3xl";
+            if (charIndex < typedText.length) {
+              if (typedText[charIndex] !== char) {
+                className += " text-red-500";
+              } else {
+                className += " text-typing-default";
+              }
+            } else if (charIndex === currentIndex) {
+              className += " text-typing-default";
+            } else {
+              className += " text-typing-default";
+            }
+            // If word is completed, fade and shrink
+            if (isCompletedWord) {
+              className += " text-muted-foreground opacity-60 text-[1.25rem] md:text-[1.75rem]";
+            }
+            const span = (
+              <span key={cIdx} className={className} style={{position: 'relative'}}>
+                {char}
+                {charIndex === currentIndex && (
+                  <span className="absolute left-0 top-0 h-full w-0.5 bg-yellow-400 animate-typing-cursor" />
+                )}
+              </span>
+            );
+            charIndex++;
+            return span;
+          })}
+          {/* Add space between words */}
+          <span className="inline-block" style={{width: '1ch'}}>&nbsp;</span>
         </span>
       );
     });
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
+  <div className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center min-h-[70vh] space-y-8">
       {/* Duration Selection */}
       <div className="flex gap-2 justify-center">
         {TEST_DURATIONS.map((duration) => (
@@ -263,14 +291,14 @@ export const TypingTest = ({ onComplete }: TypingTestProps) => {
       </div>
 
       {/* Typing Area */}
-      <Card className="p-8 relative">
+      <Card className="p-8 relative bg-transparent shadow-none border-none w-full">
         <div 
-          className="text-lg leading-relaxed font-mono select-none cursor-text min-h-32"
+          className="font-mono select-none cursor-text min-h-32 flex flex-wrap justify-center items-center gap-y-2 text-center w-full"
           onClick={() => inputRef.current?.focus()}
+          style={{ wordBreak: 'break-word', lineHeight: '2.2rem', letterSpacing: '0.08em', maxWidth: '100%' }}
         >
           {renderText()}
         </div>
-        
         <input
           ref={inputRef}
           value={typedText}
@@ -282,7 +310,6 @@ export const TypingTest = ({ onComplete }: TypingTestProps) => {
           autoCapitalize="off"
           spellCheck={false}
         />
-        
         {/* Overlay for completed test */}
         {(isCompleted || timeLeft === 0) && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
@@ -293,6 +320,11 @@ export const TypingTest = ({ onComplete }: TypingTestProps) => {
                 <div className="text-lg">Accuracy: {accuracy}%</div>
                 <div className="text-sm text-muted-foreground">Raw WPM: {rawWpm}</div>
               </div>
+              {!user && (
+                <div className="mt-4 text-sm text-secondary">
+                  <span>Sign in to save your score and appear on the leaderboard.</span>
+                </div>
+              )}
               <Button onClick={resetTest} className="mt-4">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Try Again
