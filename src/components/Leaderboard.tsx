@@ -15,7 +15,7 @@ interface LeaderboardEntry {
   profiles?: {
     username: string;
     avatar_url: string;
-  };
+  } | null;
 }
 
 interface LeaderboardProps {
@@ -44,10 +44,7 @@ export const Leaderboard = ({ timeframe = "all", limit = 10 }: LeaderboardProps)
         raw_wpm,
         duration,
         created_at,
-        profiles (
-          username,
-          avatar_url
-        )
+        user_id
       `)
       .order("wpm", { ascending: false })
       .limit(limit);
@@ -81,8 +78,28 @@ export const Leaderboard = ({ timeframe = "all", limit = 10 }: LeaderboardProps)
 
     if (error) {
       console.error("Error fetching leaderboard:", error);
+      setEntries([]);
     } else {
-      setEntries(data || []);
+      // Fetch profiles separately for users who have them
+      const testResults = data || [];
+      const userIds = testResults.map(t => t.user_id).filter(Boolean);
+      
+      let profiles: any[] = [];
+      if (userIds.length > 0) {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("user_id, username, avatar_url")
+          .in("user_id", userIds);
+        profiles = profileData || [];
+      }
+
+      // Map profiles to test results
+      const entriesWithProfiles = testResults.map(test => ({
+        ...test,
+        profiles: test.user_id ? profiles.find(p => p.user_id === test.user_id) : null
+      }));
+
+      setEntries(entriesWithProfiles);
     }
     
     setLoading(false);
@@ -117,12 +134,12 @@ export const Leaderboard = ({ timeframe = "all", limit = 10 }: LeaderboardProps)
         
         {/* Duration Filter */}
         <div className="flex gap-2 flex-wrap">
-          {["all", 15, 30, 60, 120].map((duration) => (
+        {(["all", 15, 30, 60, 120] as const).map((duration) => (
             <Badge
               key={duration}
               variant={selectedDuration === duration ? "default" : "outline"}
               className="cursor-pointer text-xs"
-              onClick={() => setSelectedDuration(duration)}
+              onClick={() => setSelectedDuration(duration as number | "all")}
             >
               {duration === "all" ? "All" : `${duration}s`}
             </Badge>
