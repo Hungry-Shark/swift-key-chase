@@ -52,6 +52,10 @@
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(47 100% 58%) 0%, hsl(45 100% 65%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(47 100% 58%) 0%, hsl(50 100% 60%) 50%, hsl(45 100% 55%) 100%);
+    --gradient-teal-gold: linear-gradient(135deg, hsl(174 72% 56%), hsl(47 98% 66%));
+    
+    /* Secondary text color */
+    --text-secondary: 220 9% 40%;
     
     /* Shadows */
     --shadow-typing: 0 0 0 2px hsl(47 100% 58% / 0.1);
@@ -163,6 +167,17 @@
   
   .gradient-hero {
     background: var(--gradient-hero);
+  }
+  
+  .gradient-teal-gold {
+    background: var(--gradient-teal-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-secondary {
+    @apply text-[hsl(var(--text-secondary))];
   }
   
   .shadow-typing {
